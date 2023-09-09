@@ -66,6 +66,7 @@ router.post("/signup", [
         return res.status(201).json({ error: false, message: "User Created Successfully", user: jwtoken, data: user })
 
     } catch (error) {
+        console.log(error)
         return res.status(401).json({ error: true, message: error })
     }
 
