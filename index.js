@@ -22,7 +22,7 @@ app.use("/auth", require("./Routes/auth"));
 app.use("/product", require("./Routes/salepurchase"));
 
 app.get("/",(req,res)=>{
-    return res.send('Welcome To the Tribe Tech Billing World');
+    return res.json({hello:'Welcome To the Tribe Tech Billing World'});
 })
 
 const port = process.env.PORT || 8000;
