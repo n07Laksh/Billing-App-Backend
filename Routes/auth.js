@@ -140,14 +140,4 @@ router.post("/login", [
 });
 
 
-router.get("/try", (req, res)=>{
-        res.send("I Am Live Now");
-})
-
-
-
-
-
-
-
 module.exports = router;
