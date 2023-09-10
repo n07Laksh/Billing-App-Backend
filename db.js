@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const uri = "mongodb+srv://dlaksh74:M6yyDYl9BqGkJDII@cluster0.vpvkunm.mongodb.net/?retryWrites=true&w=majority&ssl=true" || "mongodb://0.0.0.0:27017/admin";
+const uri = process.env.MONGODB_URL || "mongodb://0.0.0.0:27017/admin";
 
 const dbConnection = () => {
 
