@@ -27,7 +27,7 @@ router.post("/signup", [
         let user = await User.findOne({ email: req.body.email }).select("-password -_id -__v -name")
         if (user) { return res.status(400).json({ error: true, message: "User Already exit Please login" }) }
 
-        const { name, password, email, deviceName } = req.body;
+        const { name, password, email, deviceName, devicePlatform, deviceType } = req.body;
 
         // bcrypt password for security
         const salt = await bcrypt.genSalt(10);
@@ -37,7 +37,9 @@ router.post("/signup", [
             name: name,
             email: email,
             password: hashedPassword,
-            deviceName: deviceName
+            deviceName: deviceName,
+            devicePlatform: devicePlatform,
+            deviceType: deviceType
         })
 
         // Implement subscription logic here
@@ -96,7 +98,7 @@ router.post("/login", [
     }
 
     try {
-        const { email, password } = req.body;
+        const { email, password, deviceName, devicePlatform, deviceType } = req.body;
 
         let user = await User.findOne({ email: email }).select(" -__v");
         // if user not exist in the database
@@ -108,7 +110,6 @@ router.post("/login", [
         if (!comparePass) {
             return res.status(400).json({ error: true, message: "Please use the correct UserId and Password" });
         }
-
 
         // Check the user's subscription status
         const currentDate = new Date();
@@ -123,6 +124,14 @@ router.post("/login", [
             return res.status(401).json({ error: true, message: "Subscription expired. Please renew your subscription." });
         }
 
+        // Now, check the device identity
+        if (
+            user.deviceName !== deviceName ||
+            user.devicePlatform !== devicePlatform ||
+            user.deviceType !== deviceType
+        ) {
+            return res.status(401).json({ error: true, message: "You Can Only Use This User Id in One Device" });
+        }
 
         // jwt authentication
         const data = {
@@ -139,6 +148,7 @@ router.post("/login", [
         return res.status(400).json({ error: true, message: error })
     }
 });
+
 
 
 module.exports = router;

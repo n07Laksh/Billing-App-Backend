@@ -5,6 +5,7 @@ const userSchema = new Schema({
 
     name:{
         type:String,
+        require:true
     },
 
     email:{
@@ -17,6 +18,12 @@ const userSchema = new Schema({
         require:true,
     },
     deviceName:{
+        type:String,
+    },
+    devicePlatform:{
+        type:String,
+    },
+    deviceType:{
         type:String,
     },
 });
