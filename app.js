@@ -24,6 +24,9 @@ app.use("/product", require("./Routes/salepurchase"));
 app.use("/",(req,res)=>{
     return res.json({msg:'Welcome To The Tribe Tech Solutions'});
 })
+app.get("/home",(req,res)=>{
+    return res.json({hell:"hello ji how are your"})
+})
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => console.log("Listening on port " + port));
