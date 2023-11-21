@@ -1,13 +1,14 @@
 {
-  "name": "bill",
+  "name": "tribe_billing_server",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "text": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
-      "node": "20"
+      "node": "20.x"
   },
   "author": "Laksh",
   "license": "ISC",
