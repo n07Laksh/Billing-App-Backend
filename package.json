@@ -4,11 +4,10 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js",
-    "build": "react-scripts build"
+    "start": "node app.js"
   },
   "engines": {
-    "node": "18.16.1"
+      "node": "20"
   },
   "author": "Laksh",
   "license": "ISC",
