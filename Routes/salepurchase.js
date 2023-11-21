@@ -9,7 +9,6 @@ const router = express.Router();
 
 // router 1 for adding sale data using post method and route /product/saleproduct login require
 router.post("/saledata", async (req, res) => {
-    console.log("sale", req.body);
 
     try {
         let sale = await Sale.create(req.body);
@@ -24,12 +23,8 @@ router.post("/saledata", async (req, res) => {
 // router 1 for adding purchase data using post method and route /product/saleproduct login require
 router.post("/purchasedata", async (req, res) => {
 
-    console.log("purchase", req.body);
-
     try {
         let purchase = await Purchase.create(req.body);
-
-        console.log("purchase return data", purchase);
 
         return res.status(200).json({ error: false, message: "Added Successfully", data: purchase });
 
@@ -43,7 +38,6 @@ router.post("/purchasedata", async (req, res) => {
 
 // router 1 for adding purchase data using post method and route /product/searchsale login require
 router.post("/searchsale", async (req, res) => {
-    console.log(req.body)
 
     const { searchTxt, firstDate, lastDate } = req.body;
 
@@ -81,8 +75,6 @@ router.post("/searchsale", async (req, res) => {
 // router 1 for adding purchase data using post method and route /product/searchpurchase login require
 router.post("/searchpurchase", async (req, res) => {
 
-    console.log("search", req.body);
-
     const { searchTxt, billNum, firstDate, lastDate } = req.body;
 
     try {
@@ -104,7 +96,6 @@ router.post("/searchpurchase", async (req, res) => {
             return res.status(400).json({ error: true, message: "Invalid search criteria. Provide search text or date range." });
         }
 
-        console.log("Generated Query:", query);
     
         const searchedData = await Purchase.find(query);
     

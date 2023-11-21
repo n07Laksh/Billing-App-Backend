@@ -20,12 +20,12 @@ router.post("/signup", [
     const error = validationResult(req)
     // if error is accured then
     if (!error.isEmpty()) {
-        return res.status(400).json({ error: true, message: error });
+        return res.status(400).json({ error: true, message: " Incomplete submissions may not be processed." });
     }
 
     try {
         let user = await User.findOne({ email: req.body.email }).select("-password -_id -__v -name")
-        if (user) { return res.status(400).json({ error: true, message: "User Already exit Please login" }) }
+        if (user) { return res.status(400).json({ error: true, message: " User Already Exists" }) }
 
         const { name, password, email, deviceName, devicePlatform, deviceType } = req.body;
 
@@ -68,8 +68,7 @@ router.post("/signup", [
         return res.status(201).json({ error: false, message: "User Created Successfully", user: jwtoken, data: user })
 
     } catch (error) {
-        console.log(error)
-        return res.status(401).json({ error: true, message: error })
+        return res.status(401).json({ error: true, message: "Enternal Server Error" })
     }
 
 });
@@ -94,13 +93,14 @@ router.post("/login", [
     const error = validationResult(req);
     // if error is occurred then
     if (!error.isEmpty()) {
-        return res.status(400).json({ error: true, message: error });
+        return res.status(400).json({ error: true, message: " Incomplete submissions may not be processed." });
     }
 
     try {
         const { email, password, deviceName, devicePlatform, deviceType } = req.body;
 
         let user = await User.findOne({ email: email }).select(" -__v");
+        // console.log(user);
         // if user not exist in the database
         if (!user) {
             return res.status(500).json({ error: true, message: "Please use the correct UserId and Password" });
@@ -125,13 +125,13 @@ router.post("/login", [
         }
 
         // Now, check the device identity
-        if (
-            user.deviceName !== deviceName ||
-            user.devicePlatform !== devicePlatform ||
-            user.deviceType !== deviceType
-        ) {
-            return res.status(401).json({ error: true, message: "You Can Only Use This User Id in One Device" });
-        }
+        // if (
+        //     user.deviceName !== deviceName ||
+        //     user.devicePlatform !== devicePlatform ||
+        //     user.deviceType !== deviceType
+        // ) {
+        //     return res.status(401).json({ error: true, message: "You Can Only Use This User Id in One Device" });
+        // }
 
         // jwt authentication
         const data = {
@@ -144,8 +144,7 @@ router.post("/login", [
         return res.status(201).json({ error: false, message: `Welcome Again Mr. ${user.name}`, user: jwtoken, data: user });
 
     } catch (error) {
-        console.log(error)
-        return res.status(400).json({ error: true, message: error })
+        return res.status(400).json({ error: true, message:"Enternal Server Error" });
     }
 });
 
