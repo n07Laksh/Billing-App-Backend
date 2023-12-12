@@ -20,12 +20,10 @@ app.use(
 
 app.use("/auth", require("./Routes/auth"));
 app.use("/product", require("./Routes/salepurchase"));
+app.use("/invoice", require("./Routes/invoice"));
 
 app.use("/",(req,res)=>{
     return res.json({msg:'Welcome To The Tribe Tech Solutions'});
-})
-app.get("/home",(req,res)=>{
-    return res.json({hell:"hello ji how are your"})
 })
 
 const port = process.env.PORT || 8001;

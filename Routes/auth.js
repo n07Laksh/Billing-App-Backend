@@ -5,7 +5,8 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken")
 const router = express.Router();
-
+const axios = require("axios");
+const getuser = require("../Middleware/getuser");
 const secret_key = process.env.JWT_SECRET_KEY;
 
 // router 1 for creating user using POST method and route /auth/signup no login require
@@ -98,6 +99,7 @@ router.post("/login", [
 
     try {
         const { email, password, deviceName, devicePlatform, deviceType } = req.body;
+        console.log(req.body)
 
         let user = await User.findOne({ email: email }).select(" -__v");
         // console.log(user);
@@ -144,9 +146,54 @@ router.post("/login", [
         return res.status(201).json({ error: false, message: `Welcome Again Mr. ${user.name}`, user: jwtoken, data: user });
 
     } catch (error) {
-        return res.status(400).json({ error: true, message:"Enternal Server Error" });
+        return res.status(400).json({ error: true, message: "Enternal Server Error" });
     }
 });
+
+
+//router 2 for getting/login user using POST method and route /auth/gstvalidation no login require
+router.post("/gstvalidation", getuser, async (req, res) => {
+
+    const body = req.body;
+    const user = req.user
+
+    try {
+        let updatedUser;
+
+        const foundUser = await User.findById(user.id).select("-password -_id -__v -name");
+
+        if (foundUser) {
+            // Check if the user already has a GSTIN
+            if (foundUser.GSTIN) {
+                // Update the existing GSTIN
+                foundUser.GSTIN = body.GSTIN; // Assuming "GSTIN" is the key in the request body
+                updatedUser = await foundUser.save();
+            } else {
+                // Add new GSTIN to the user data
+                foundUser.GSTIN = body.GSTIN; // Assuming "GSTIN" is the key in the request body
+                updatedUser = await foundUser.save();
+            }
+            return res.status(200).json({
+                error: false,
+                message: "User updated or created successfully",
+                user: updatedUser // Send the updated or newly created user in the response
+            });
+        } else {
+            // User not found, you may handle this case accordingly (return an error or perform necessary action)
+            return res.status(404).json({ error: true, message: "User not found" });
+        }
+
+        return res.status(200).json({
+            error: false,
+            message: "GSTIN updated or added successfully",
+            user: updatedUser // Send the updated user in the response
+        });
+
+    } catch (error) {
+        return res.status(400).json({ error: true, message: error })
+    }
+}
+)
 
 
 
