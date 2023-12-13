@@ -2,12 +2,15 @@ const express = require("express");
 const fs = require("fs");
 const { jsPDF } = require("jspdf");
 const {
-    getWrappedTextLines,
-    totalMoney,
-    totalCount
-  } = require('../UtilityFunctions/invoiceUtilityFunctions');
+  getWrappedTextLines,
+  totalMoney,
+  totalCount,
+} = require("../UtilityFunctions/invoiceUtilityFunctions");
 
+const bodyParser = require("body-parser");
 const router = express.Router();
+const app = express();
+app.use(bodyParser.json({ limit: "500mb" }));
 
 // Create a directory if it doesn't exist
 const pdfDirectory = "./pdfs/";
@@ -15,11 +18,8 @@ if (!fs.existsSync(pdfDirectory)) {
   fs.mkdirSync(pdfDirectory);
 }
 
-router.get("/generate-pdf", (req, res) => {
-
-    const {item, gst, add} = req.body;
-
-    // console.log(req.body)
+router.post("/generate-pdf", (req, res) => {
+  const { item, gst, add } = req.body;
 
   const doc = new jsPDF({
     orientation: "portrait",
@@ -27,7 +27,7 @@ router.get("/generate-pdf", (req, res) => {
     format: [5.8, 8.3], // A5 size in inches (portrait)
   });
 
-//   doc.addImage(img ? img : Logo, "PNG", 0.5, 0.7, 0.7, 0.7);
+  //   doc.addImage(img, "PNG", 0.5, 0.7, 0.7, 0.7);
 
   doc.setFontSize(17);
   doc.setFont("helvetica", "bold"); // Set font as bold
@@ -116,14 +116,14 @@ router.get("/generate-pdf", (req, res) => {
   doc.text("Total Qyt.", 1.7, nextSectionY);
 
   const sumCount = totalCount(item.saleItem);
-//   const sumCount = 3425324;
+  //   const sumCount = 3425324;
   doc.text(`${sumCount}`, 2.5, nextSectionY);
 
   doc.setFont("helvetica", "bold");
   doc.text("Sub-total", 3.2, nextSectionY);
 
   doc.setFont("helvetica", "bold");
-  const sumMoney = totalMoney(item.saleItem)
+  const sumMoney = totalMoney(item.saleItem);
   doc.text(`${sumMoney}`, 4.4, nextSectionY);
 
   // Set background color behind the text
@@ -149,32 +149,35 @@ router.get("/generate-pdf", (req, res) => {
 
   doc.setTextColor("#000");
 
-  doc.setFont("", "bold");
+  doc.setFont("helvetica", "bold");
   doc.text("Thank you for business with us!", 0.5, nextSectionY + 0.7);
 
   // Generate the PDF file
   const fileName = `${item.clientName}.pdf`;
   const filePath = `./pdfs/${fileName}`; // Replace with your desired storage path
 
+  // Generate the PDF file content
+  const pdfContent = doc.output();
+
   // Save the PDF on the server
-  doc.save(filePath, (error) => {
-    if (error) {
-      console.error("Error saving PDF:", error);
-      res.status(500).send("Internal Server Error");
-    } else {
-      // Set content type as application/pdf
-      res.setHeader("Content-Type", "application/pdf");
+  try {
+    fs.writeFileSync(filePath, pdfContent, "binary");
 
-      // Send the generated PDF file as a response
-      const fileStream = fs.createReadStream(filePath);
-      fileStream.pipe(res);
+    // Set content type as application/pdf
+    res.setHeader("Content-Type", "application/pdf");
 
-      // Remove the generated file after sending the response
-      fileStream.on("close", () => {
-        fs.unlinkSync(filePath);
-      });
-    }
-  });
+    // Send the generated PDF file as a response
+    const fileStream = fs.createReadStream(filePath);
+    fileStream.pipe(res);
+
+    // Remove the generated file after sending the response
+    fileStream.on("close", () => {
+      fs.unlinkSync(filePath);
+    });
+  } catch (error) {
+    console.error("Error saving PDF:", error);
+    res.status(500).json({ msg: "Internal Server Error", err: error });
+  }
 });
 
 module.exports = router;

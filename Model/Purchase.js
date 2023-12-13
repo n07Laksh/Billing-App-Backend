@@ -1,59 +1,29 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const purchaseSchema = new Schema({
-    invoiceType:{
-        type:String,       
-    },
-    supplierName:{
-        type:String,
-    },
-    billNum:{
-        type:String,
-    },
-    tag:{
-        type:String,
-    },
-    name:{
-        type:String,
-    },
-    unit:{
-        type:String,
-    },
-    quantity:{
-        type:String,
-    },
-    salePrice:{
-        type:String,
-    },
-    disc:{
-        type:String,
-    },
-    gst:{
-        type:String,
-    },
-    amount:{
-        type:String,
-    },
-    payMode:{
-    type:String,
-    },
-    date: {
-        type:String,
-    },
-    today: {
-        type:String,
-    },
-    totalDiscount:{
-        type:String,
-    },
-    totalGST:{
-        type: String,
-    },
-    id:{
-        type:String
-    }
-
+const purchaseItemSchema = new Schema({
+  name: String,
+  unit: String,
+  quantity: String,
+  salePrice: String,
+  disc: String,
+  gst: String,
+  amount: String,
+  date: String,
 });
 
-module.exports = mongoose.model("parchasedatas", purchaseSchema);
+const purchaseSchema = new Schema({
+  user: String,
+  invoiceType: String,
+  supplierName: String,
+  billNum: String,
+  tag: String,
+  purchaseItem: [purchaseItemSchema], // Modify purchaseItem to an array of purchaseItemSchema
+  payMode: String,
+  today: String,
+  totalDiscount: String,
+  totalGST: String,
+  id: String,
+});
+
+module.exports = mongoose.model("purchasedatas", purchaseSchema);
