@@ -165,7 +165,7 @@ router.post("/fetchsaledata", getuser, async (req, res) => {
     const userId = req.user.id;
 
     // Find all sale data associated with the user ID
-    const sales = await Sale.find({ user: userId });
+    const sales = await Sale.find({ user: userId }).select({ _id: 0, user: 0, __v:0 });
 
     if (sales.length > 0) {
       return res.status(200).json({
